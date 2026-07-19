@@ -1,0 +1,890 @@
+# Enterprise Multi-Vendor Food Delivery SaaS Platform
+
+Build a production-ready, enterprise-grade Multi-Vendor Food Delivery SaaS Platform inspired by Zomato, Swiggy, Uber Eats, DoorDash, Deliveroo, Foodpanda, Talabat, GrabFood, and Glovo.
+
+The platform must support multiple restaurants, restaurant branches, customers, delivery partners, and a Super Admin from a single codebase.
+
+Every restaurant should have its own dashboard, subscription, staff, menu, orders, analytics, wallet, and settings.
+
+The platform owner (Super Admin) controls everything.
+
+This is NOT a demo project.
+
+Everything must be production-ready.
+
+==================================================
+UI / UX
+==================================================
+
+Use the attached UI as the main inspiration.
+
+The entire platform should feel like a premium native mobile application while working perfectly on desktop browsers.
+
+Style
+
+• Apple Quality
+• Modern SaaS
+• Mobile First
+• Material 3
+• Glassmorphism
+• Soft Shadows
+• Premium Gradients
+• Rounded Cards
+• Smooth Animations
+• Large Food Photography
+• Clean Layout
+• White Space
+• Professional Typography
+• Floating Cards
+• Floating Bottom Navigation
+• Sticky Cart
+• Sticky Checkout
+• Sticky Search
+• Floating Action Buttons
+• Micro Interactions
+• Skeleton Loading
+• Shimmer Effects
+• Dark Mode
+• Light Mode
+
+NO Bootstrap admin style.
+
+Everything should look like a modern startup.
+
+==================================================
+Color Palette
+==================================================
+
+Primary
+#22C55E
+
+Primary Dark
+#16A34A
+
+Secondary
+#34D399
+
+Accent
+#FACC15
+
+Danger
+#EF4444
+
+Background
+#F8FAFC
+
+Card
+#FFFFFF
+
+Text
+#111827
+
+Secondary Text
+#6B7280
+
+Border
+#E5E7EB
+
+==================================================
+Typography
+==================================================
+
+Font
+
+Inter
+
+Bold Headings
+
+Medium Subtitle
+
+Regular Body
+
+SemiBold Buttons
+
+==================================================
+Icons
+==================================================
+
+Lucide Icons
+
+Outlined
+
+Animated Hover
+
+==================================================
+Animations
+==================================================
+
+Framer Motion
+
+Fade
+
+Scale
+
+Slide
+
+Card Hover
+
+Button Ripple
+
+Skeleton Loading
+
+Shimmer
+
+Page Transition
+
+==================================================
+Frontend
+==================================================
+
+React 19
+
+TypeScript
+
+Vite
+
+Tailwind CSS
+
+shadcn/ui
+
+Framer Motion
+
+React Router
+
+TanStack Query
+
+TanStack Table
+
+Zustand
+
+React Hook Form
+
+Zod
+
+Axios
+
+Socket.IO Client
+
+React Leaflet or Google Maps
+
+Recharts
+
+==================================================
+Backend
+==================================================
+
+Node.js 22
+
+NestJS
+
+TypeScript
+
+Prisma ORM
+
+PostgreSQL
+
+Redis
+
+Socket.IO
+
+JWT
+
+Refresh Tokens
+
+Passport
+
+BullMQ
+
+Cloudinary
+
+Firebase Cloud Messaging
+
+Nodemailer
+
+Swagger
+
+==================================================
+Database
+==================================================
+
+PostgreSQL
+
+Redis Cache
+
+==================================================
+Storage
+==================================================
+
+Cloudinary
+
+==================================================
+Maps
+==================================================
+
+Google Maps API
+
+Current Location
+
+Distance Matrix
+
+ETA
+
+Nearby Restaurants
+
+Live Driver Tracking
+
+Navigation
+
+Delivery Radius
+
+==================================================
+Payments
+==================================================
+
+Razorpay
+
+Stripe
+
+PhonePe
+
+UPI
+
+Cash On Delivery
+
+Wallet
+
+Refund
+
+Webhook
+
+==================================================
+Authentication
+==================================================
+
+Phone OTP
+
+Email Login
+
+Google Login
+
+Apple Login
+
+JWT
+
+Refresh Token
+
+Remember Login
+
+Role Based Access Control
+
+2FA
+
+Forgot Password
+
+Reset Password
+
+Session Management
+
+==================================================
+Roles
+==================================================
+
+Super Admin
+
+Restaurant Owner
+
+Restaurant Manager
+
+Cashier
+
+Kitchen Staff
+
+Delivery Partner
+
+Customer
+
+Support Staff
+
+Finance Staff
+
+Marketing Staff
+
+==================================================
+Customer Website
+==================================================
+
+Home
+
+Search
+
+Restaurant Listing
+
+Restaurant Details
+
+Food Details
+
+Food Categories
+
+Restaurant Categories
+
+Trending Foods
+
+Popular Restaurants
+
+Nearby Restaurants
+
+Banner Slider
+
+Offers
+
+Coupons
+
+Flash Deals
+
+Recommended Foods
+
+Favorites
+
+Cart
+
+Checkout
+
+Wallet
+
+Membership
+
+Reward Points
+
+Referral
+
+Reviews
+
+Address
+
+Order Tracking
+
+Order History
+
+Notifications
+
+Support
+
+Profile
+
+Settings
+
+==================================================
+Restaurant Dashboard
+==================================================
+
+Dashboard
+
+Live Orders
+
+Kitchen Display
+
+Orders
+
+Menu
+
+Food Categories
+
+Addons
+
+Variants
+
+Inventory
+
+Coupons
+
+Customers
+
+Analytics
+
+Reports
+
+Wallet
+
+Subscription
+
+Payout
+
+Reviews
+
+Staff Management
+
+Branches
+
+Business Hours
+
+Restaurant Profile
+
+Restaurant Verification
+
+Documents
+
+Settings
+
+==================================================
+Delivery Dashboard
+==================================================
+
+Dashboard
+
+Online / Offline
+
+Available Orders
+
+Accept Order
+
+Reject Order
+
+Google Navigation
+
+Live Map
+
+Current Delivery
+
+Completed Orders
+
+Wallet
+
+Earnings
+
+Payout
+
+Ratings
+
+Vehicle
+
+Documents
+
+Profile
+
+Settings
+
+==================================================
+Super Admin
+==================================================
+
+Dashboard
+
+Restaurants
+
+Restaurant Approval
+
+Restaurant Verification
+
+Subscriptions
+
+Subscription Plans
+
+Customers
+
+Orders
+
+Delivery Partners
+
+Driver Verification
+
+Payments
+
+Wallet
+
+Finance
+
+Commission
+
+Reports
+
+Analytics
+
+Categories
+
+Food Categories
+
+Cities
+
+Zones
+
+Pincodes
+
+Coupons
+
+Banner Slider
+
+CMS
+
+Blog
+
+Notifications
+
+Support Tickets
+
+Roles
+
+Permissions
+
+Audit Logs
+
+Payment Settings
+
+Email Settings
+
+SMS Settings
+
+WhatsApp Settings
+
+Google Maps Settings
+
+Cloudinary Settings
+
+Firebase Settings
+
+Platform Settings
+
+==================================================
+Subscription System
+==================================================
+
+Starter Plan
+
+Pro Plan
+
+Premium Plan
+
+Enterprise Plan
+
+Monthly Billing
+
+Yearly Billing
+
+Invoices
+
+Auto Renewal
+
+Upgrade
+
+Downgrade
+
+Trial
+
+Commission Settings
+
+==================================================
+Wallet
+==================================================
+
+Customer Wallet
+
+Restaurant Wallet
+
+Driver Wallet
+
+Platform Wallet
+
+Transactions
+
+Settlement
+
+Withdraw
+
+Refund
+
+==================================================
+Delivery Flow
+==================================================
+
+Customer Places Order
+
+↓
+
+Restaurant Accepts
+
+↓
+
+Preparing
+
+↓
+
+Driver Assigned Automatically
+
+↓
+
+Driver Accepts
+
+↓
+
+Driver Reaches Restaurant
+
+↓
+
+Food Picked Up
+
+↓
+
+Live GPS Tracking
+
+↓
+
+Driver Reaches Customer
+
+↓
+
+OTP Verification
+
+↓
+
+Delivered
+
+↓
+
+Restaurant Settlement
+
+↓
+
+Commission Deduction
+
+==================================================
+Commission
+==================================================
+
+Restaurant Commission
+
+Delivery Commission
+
+Platform Fee
+
+Convenience Fee
+
+GST
+
+Tax
+
+Monthly Reports
+
+==================================================
+Notifications
+==================================================
+
+Push Notifications
+
+Email
+
+SMS
+
+WhatsApp
+
+In-App Notifications
+
+Announcements
+
+Promotions
+
+Order Updates
+
+==================================================
+Database Tables
+==================================================
+
+users
+
+customers
+
+restaurants
+
+restaurant_branches
+
+restaurant_staff
+
+subscriptions
+
+subscription_plans
+
+restaurant_wallet
+
+customer_wallet
+
+driver_wallet
+
+delivery_partners
+
+driver_documents
+
+driver_vehicle
+
+driver_locations
+
+food_categories
+
+foods
+
+food_images
+
+food_variants
+
+addons
+
+orders
+
+order_items
+
+payments
+
+transactions
+
+coupons
+
+reviews
+
+favorites
+
+notifications
+
+reward_points
+
+membership
+
+cities
+
+zones
+
+pincodes
+
+support_tickets
+
+reports
+
+audit_logs
+
+roles
+
+permissions
+
+settings
+
+banners
+
+cms_pages
+
+blogs
+
+==================================================
+Security
+==================================================
+
+Helmet
+
+Rate Limiting
+
+Argon2 Password Hashing
+
+Input Validation
+
+SQL Injection Protection
+
+XSS Protection
+
+CSRF Protection
+
+Audit Logs
+
+Activity Logs
+
+IP Logging
+
+HTTPS
+
+==================================================
+Performance
+==================================================
+
+Lazy Loading
+
+Image Optimization
+
+Virtual Scrolling
+
+Pagination
+
+Caching
+
+Code Splitting
+
+SEO Ready
+
+CDN Ready
+
+PWA Ready
+
+==================================================
+Responsive
+==================================================
+
+Desktop
+
+Laptop
+
+Tablet
+
+Mobile
+
+Everything should feel like a native mobile application.
+
+==================================================
+Code Quality
+==================================================
+
+Clean Architecture
+
+Feature Based Folder Structure
+
+Reusable Components
+
+Reusable Hooks
+
+Reusable Services
+
+Reusable API Layer
+
+Strict TypeScript
+
+Scalable
+
+Maintainable
+
+Production Ready
+
+Well Documented
+
+==================================================
+Final Requirements
+==================================================
+
+Build a complete enterprise-grade Multi-Vendor Food Delivery SaaS Platform.
+
+No placeholders.
+
+No mock UI.
+
+No Bootstrap.
+
+No unfinished pages.
+
+Every page must be fully functional.
+
+Every dashboard must have beautiful modern UI.
+
+Every table should include:
+
+• Search
+• Filters
+• Sorting
+• Pagination
+• Export CSV
+• Export Excel
+• Bulk Actions
+
+Use premium animations, beautiful food cards, floating layouts, glassmorphism, rounded components, smooth transitions, Apple-quality UI, and modern SaaS design.
+
+The final result should look like a $100M startup product, optimized for performance, security, scalability, and an exceptional mobile-first user experience.

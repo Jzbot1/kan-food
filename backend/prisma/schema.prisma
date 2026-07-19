@@ -1,0 +1,346 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  RESTAURANT_OWNER
+  RESTAURANT_MANAGER
+  CASHIER
+  KITCHEN_STAFF
+  DELIVERY_PARTNER
+  CUSTOMER
+  SUPPORT_STAFF
+  FINANCE_STAFF
+  MARKETING_STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  PREPARING
+  READY
+  PICKED_UP
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum WalletType {
+  CUSTOMER
+  RESTAURANT
+  DRIVER
+  PLATFORM
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum SubscriptionPlanTier {
+  STARTER
+  PRO
+  PREMIUM
+  ENTERPRISE
+}
+
+model User {
+  id                 String           @id @default(uuid())
+  email              String           @unique
+  phone              String           @unique
+  name               String
+  passwordHash       String
+  role               Role             @default(CUSTOMER)
+  isTwoFactorEnabled Boolean          @default(false)
+  twoFactorSecret    String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  customerProfile    CustomerProfile?
+  deliveryPartner    DeliveryPartner?
+  restaurantStaff    RestaurantStaff?
+  restaurantsOwned   Restaurant[]
+  auditLogs          AuditLog[]
+  supportTickets     SupportTicket[]
+  addresses          UserAddress[]
+}
+
+model CustomerProfile {
+  id                  String             @id @default(uuid())
+  userId              String             @unique
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  walletId            String             @unique
+  wallet              Wallet             @relation(fields: [walletId], references: [id])
+  rewardPoints        Int                @default(0)
+  membershipTier      String             @default("REGULAR") // REGULAR, PRIME
+  membershipExpiresAt DateTime?
+  orders              Order[]
+}
+
+model Restaurant {
+  id             String            @id @default(uuid())
+  ownerId        String
+  owner          User              @relation(fields: [ownerId], references: [id])
+  name           String
+  description    String?
+  logoUrl        String?
+  bannerUrl      String?
+  rating         Float             @default(5.0)
+  reviewsCount   Int               @default(0)
+  commissionRate Float             @default(15.0) // percentage
+  isApproved     Boolean           @default(false)
+  isVerified     Boolean           @default(false)
+  address        String
+  latitude       Float
+  longitude      Float
+  deliveryRadius Float             @default(5.0) // in kms
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  branches       Branch[]
+  staff          RestaurantStaff[]
+  subscriptions  Subscription[]
+  foodCategories FoodCategory[]
+  orders         Order[]
+  walletId       String            @unique
+  wallet         Wallet            @relation(fields: [walletId], references: [id])
+}
+
+model Branch {
+  id           String     @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  address      String
+  latitude     Float
+  longitude    Float
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+}
+
+model RestaurantStaff {
+  id           String     @id @default(uuid())
+  userId       String     @unique
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  role         Role       @default(RESTAURANT_MANAGER) // MANAGER, CASHIER, KITCHEN_STAFF
+  createdAt    DateTime   @default(now())
+}
+
+model SubscriptionPlan {
+  id            String               @id @default(uuid())
+  tier          SubscriptionPlanTier @unique
+  name          String
+  priceMonthly  Float
+  priceYearly   Float
+  commissionRate Float               @default(10.0)
+  features      String[]             // serialized JSON or array of feature flags
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id           String           @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  planId       String
+  plan         SubscriptionPlan @relation(fields: [planId], references: [id])
+  status       String           @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+  billingCycle String           @default("MONTHLY") // MONTHLY, YEARLY
+  expiresAt    DateTime
+  autoRenew    Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+}
+
+model Wallet {
+  id              String           @id @default(uuid())
+  type            WalletType
+  balance         Float            @default(0.0)
+  transactions    Transaction[]
+  customerProfile CustomerProfile?
+  restaurant      Restaurant?
+  deliveryPartner DeliveryPartner?
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  walletId    String
+  wallet      Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  amount      Float
+  type        TransactionType
+  description String
+  referenceId String?         // orderId or paymentId
+  createdAt   DateTime        @default(now())
+}
+
+model FoodCategory {
+  id           String     @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  foods        Food[]
+}
+
+model Food {
+  id           String        @id @default(uuid())
+  categoryId   String
+  category     FoodCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  price        Float
+  imageUrl     String?
+  isAvailable  Boolean       @default(true)
+  isVeg        Boolean       @default(true)
+  isBestseller Boolean       @default(false)
+  variants     FoodVariant[]
+  addons       Addon[]
+}
+
+model FoodVariant {
+  id     String @id @default(uuid())
+  foodId String
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  name   String
+  price  Float
+}
+
+model Addon {
+  id     String @id @default(uuid())
+  foodId String
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  name   String
+  price  Float
+}
+
+model Order {
+  id              String           @id @default(uuid())
+  customerId      String
+  customer        CustomerProfile  @relation(fields: [customerId], references: [id])
+  restaurantId    String
+  restaurant      Restaurant       @relation(fields: [restaurantId], references: [id])
+  driverId        String?
+  driver          DeliveryPartner? @relation(fields: [driverId], references: [id])
+  status          OrderStatus      @default(PENDING)
+  deliveryFee     Float            @default(0.0)
+  tax             Float            @default(0.0)
+  discount        Float            @default(0.0)
+  commission      Float            @default(0.0)
+  totalAmount     Float
+  paymentMethod   String           @default("COD") // COD, CARD, WALLET
+  paymentStatus   PaymentStatus    @default(PENDING)
+  otp             String           // 4 or 6 digit verification code for delivery completion
+  deliveryAddress String
+  deliveryLat     Float
+  deliveryLng     Float
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  items           OrderItem[]
+  reviews         Review[]
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodId    String
+  name      String
+  price     Float
+  quantity  Int
+  variants  String[] // Selected variant names
+  addons    String[] // Selected addon names
+}
+
+model DeliveryPartner {
+  id           String     @id @default(uuid())
+  userId       String     @unique
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  walletId     String     @unique
+  wallet       Wallet     @relation(fields: [walletId], references: [id])
+  isOnline     Boolean    @default(false)
+  vehicleType  String     // BIKE, CAR, CYCLE
+  vehiclePlate String?
+  isApproved   Boolean    @default(false)
+  currentLat   Float?
+  currentLng   Float?
+  orders       Order[]
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  ipAddress String?
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model SupportTicket {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  message   String
+  status    String   @default("OPEN") // OPEN, RESOLVED, CLOSED
+  reply     String?
+  createdAt DateTime @default(now())
+}
+
+model SystemSettings {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
+
+model UserAddress {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipientName    String
+  phoneNumber      String
+  alternativePhone String?
+  addressType      String   // HOME, WORK, OTHER
+  houseNumber      String
+  buildingName     String?
+  street           String
+  landmark         String?
+  area             String
+  city             String
+  state            String
+  country          String
+  pincode          String
+  latitude         Float
+  longitude        Float
+  deliveryNote     String?
+  isDefault        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// Platform-wide food categories managed by Super Admin
+model GlobalFoodCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+}
