@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import shipbiteLogo from '../../favicon/favicon-96x96.png';
 
 interface FooterProps {
   onLinkClick: (pageId: string) => void;
@@ -105,37 +106,23 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
 
   const sections = [
     {
-      title: 'Quick Links',
+      title: 'Platform',
       links: [
         { label: 'Home', action: () => onLinkClick('home') },
         { label: 'Restaurants', action: () => onLinkClick('restaurants') },
         { label: 'Food Categories', action: () => onLinkClick('categories') },
         { label: 'Offers', action: () => onLinkClick('offers') },
-        { label: 'Popular Restaurants', action: () => onLinkClick('popular-restaurants') },
         { label: 'Become a Partner', action: () => onLinkClick('become-restaurant-partner') },
         { label: 'About Us', action: () => onLinkClick('about-us') },
-        { label: 'Contact Us', action: () => onLinkClick('contact-support') },
-        { label: 'Careers', action: () => onLinkClick('careers') },
-        { label: 'Blog', action: () => onLinkClick('blog') },
-        { label: 'News', action: () => onLinkClick('news') },
-        { label: 'Gift Cards', action: () => onLinkClick('gift-cards') },
-        { label: 'Membership', action: () => onLinkClick('membership') },
-        { label: 'Refer & Earn', action: () => onLinkClick('refer-earn') },
       ]
     },
     {
-      title: 'Customer Support',
+      title: 'Support',
       links: [
         { label: 'Help Center', action: () => onLinkClick('help-center') },
         { label: 'FAQs', action: () => onLinkClick('faqs') },
         { label: 'Contact Support', action: () => onLinkClick('contact-support') },
-        { label: 'Live Chat', action: () => onLinkClick('live-chat') },
         { label: 'Raise Ticket', action: () => onLinkClick('raise-ticket') },
-        { label: 'Order Support', action: () => onLinkClick('order-support') },
-        { label: 'Payment Support', action: () => onLinkClick('payment-support') },
-        { label: 'Delivery Support', action: () => onLinkClick('delivery-support') },
-        { label: 'Report Issue', action: () => onLinkClick('report-issue') },
-        { label: 'Feedback', action: () => onLinkClick('feedback') },
       ]
     },
     {
@@ -145,11 +132,6 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
         { label: 'Terms & Conditions', action: () => onLinkClick('terms-conditions') },
         { label: 'Refund Policy', action: () => onLinkClick('refund-policy') },
         { label: 'Cancellation Policy', action: () => onLinkClick('cancellation-policy') },
-        { label: 'Shipping & Delivery', action: () => onLinkClick('shipping-delivery-policy') },
-        { label: 'Cookie Policy', action: () => onLinkClick('cookie-policy') },
-        { label: 'Vendor Agreement', action: () => onLinkClick('vendor-agreement') },
-        { label: 'User Agreement', action: () => onLinkClick('user-agreement') },
-        { label: 'Disclaimer', action: () => onLinkClick('disclaimer') },
       ]
     },
     {
@@ -158,9 +140,6 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
         { label: 'Become Partner', action: () => onLinkClick('become-restaurant-partner') },
         { label: 'Delivery Fleet', action: () => onLinkClick('become-delivery-partner') },
         { label: 'Business Solutions', action: () => onLinkClick('business-solutions') },
-        { label: 'Advertising', action: () => onLinkClick('advertising') },
-        { label: 'Corporate Orders', action: () => onLinkClick('corporate-orders') },
-        { label: 'Developer Portal', action: () => onLinkClick('developer-portal') },
       ]
     }
   ];
@@ -211,7 +190,7 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
           <div key={sect.title} className="space-y-2.5">
             <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">{sect.title}</span>
             <ul className="space-y-1.5 text-[10px] text-slate-400">
-              {sect.links.slice(0, 7).map((link) => (
+              {sect.links.map((link) => (
                 <li key={link.label}>
                   <button 
                     type="button" 
@@ -244,7 +223,7 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
 
           <div className="flex items-center gap-3.5 z-10">
             <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center flex-shrink-0 shadow-inner p-1">
-              <img src="/src/favicon/favicon-96x96.png" alt="Shipbite Icon" className="w-full h-full object-contain rounded-md" />
+              <img src={shipbiteLogo} alt="Shipbite Icon" className="w-full h-full object-contain rounded-md" />
             </div>
             <div className="space-y-0.5">
               <h4 className="font-black text-xs text-white">📱 Download App</h4>
