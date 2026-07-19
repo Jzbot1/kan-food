@@ -1486,7 +1486,7 @@ export const useAppStore = create<AppState>()(
       }
     }),
     {
-      name: 'shipbite-saas-store',
+      name: 'shipbite-saas-store-v2',
     }
   )
 );
@@ -1497,7 +1497,7 @@ export const useAppStore = create<AppState>()(
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (event) => {
     // If the local storage is updated, synchronize the Zustand store immediately
-    if (event.key === 'shipbite-saas-store') {
+    if (event.key === 'shipbite-saas-store-v2') {
       // Rehydrate store
       useAppStore.persist.rehydrate();
     }
