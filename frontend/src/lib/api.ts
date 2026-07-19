@@ -42,6 +42,12 @@ export const api = {
     request<any>('/api/restaurants', { method: 'POST', body: JSON.stringify(body) }),
   approveRestaurant: (id: string) =>
     request<any>(`/api/restaurants/${id}/approve`, { method: 'PUT' }),
+  banRestaurant: (id: string) =>
+    request<any>(`/api/restaurants/${id}/ban`, { method: 'PUT' }),
+  unbanRestaurant: (id: string) =>
+    request<any>(`/api/restaurants/${id}/unban`, { method: 'PUT' }),
+  deleteRestaurant: (id: string) =>
+    request<any>(`/api/restaurants/${id}`, { method: 'DELETE' }),
   addMenuItem: (restaurantId: string, body: any) =>
     request<any>(`/api/restaurants/${restaurantId}/menu`, { method: 'POST', body: JSON.stringify(body) }),
 

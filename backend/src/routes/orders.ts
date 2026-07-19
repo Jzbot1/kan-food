@@ -13,7 +13,7 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
     if (!profile) return res.status(400).json({ error: 'Customer profile not found' });
 
     const restaurant = await prisma.restaurant.findUnique({ where: { id: restaurantId } });
-    if (!restaurant || !restaurant.isApproved) return res.status(400).json({ error: 'Restaurant not available' });
+    if (!restaurant || !restaurant.isApproved || restaurant.isBanned) return res.status(400).json({ error: 'Restaurant not available' });
 
     const subtotal = (items as any[]).reduce((sum, item) => sum + item.price * item.quantity, 0);
     const fee = deliveryFee ?? 39;

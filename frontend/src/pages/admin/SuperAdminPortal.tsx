@@ -26,6 +26,9 @@ export const SuperAdminPortal: React.FC = () => {
     deleteFoodCategory,
     approveRestaurant,
     verifyRestaurant,
+    banRestaurant,
+    unbanRestaurant,
+    deleteRestaurant,
     approveDriver,
     replyToSupportTicket,
     addAuditLog,
@@ -65,8 +68,9 @@ export const SuperAdminPortal: React.FC = () => {
   const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   const platformWallet = wallets.find(w => w.ownerId === 'PLATFORM')!;
-  const pendingRestaurants = restaurants.filter(r => !r.isApproved);
-  const activeRestaurants = restaurants.filter(r => r.isApproved);
+  const pendingRestaurants = restaurants.filter(r => !r.isApproved && !r.isBanned);
+  const activeRestaurants = restaurants.filter(r => r.isApproved && !r.isBanned);
+  const bannedRestaurants = restaurants.filter(r => r.isBanned);
   
   const pendingDrivers = drivers.filter(d => !d.isApproved);
   const activeDrivers = drivers.filter(d => d.isApproved);
@@ -440,15 +444,69 @@ export const SuperAdminPortal: React.FC = () => {
                       <p className="text-[8px] text-text-secondary">Plan: <strong className="text-primary">{r.subscriptionPlan}</strong> • Fee: {r.commissionRate}%</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => verifyRestaurant(r.id)}
-                    className={`py-1 px-3 rounded-lg text-[9px] font-extrabold transition-colors ${r.isVerified ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}
-                  >
-                    {r.isVerified ? 'Verified ✓' : 'Verify'}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => verifyRestaurant(r.id)}
+                      className={`py-1 px-3 rounded-lg text-[9px] font-extrabold transition-colors ${r.isVerified ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}
+                    >
+                      {r.isVerified ? 'Verified ✓' : 'Verify'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to ban ${r.name}?`)) {
+                          banRestaurant(r.id);
+                          addAuditLog(`Super Admin banned restaurant: ${r.name}`);
+                        }
+                      }}
+                      className="py-1 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[9px] font-extrabold transition-colors"
+                    >
+                      Ban
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
+
+            {/* Banned Merchants */}
+            {bannedRestaurants.length > 0 && (
+              <div className="space-y-3 pt-3">
+                <h3 className="text-[10px] font-bold text-red-600 uppercase tracking-wider">Banned Stores ({bannedRestaurants.length})</h3>
+                {bannedRestaurants.map((r) => (
+                  <div key={r.id} className="bg-red-50/50 rounded-[22px] border border-red-100 p-3.5 shadow-sm flex items-center justify-between">
+                    <div className="flex gap-3 items-center">
+                      <img src={r.logo} alt={r.name} className="w-9 h-9 rounded-xl object-cover grayscale" />
+                      <div>
+                        <h4 className="font-extrabold text-xs text-slate-800 line-through">{r.name}</h4>
+                        <p className="text-[8px] text-slate-500">Plan: {r.subscriptionPlan} • Fee: {r.commissionRate}%</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          unbanRestaurant(r.id);
+                          addAuditLog(`Super Admin unbanned restaurant: ${r.name}`);
+                        }}
+                        className="py-1 px-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-[9px] font-extrabold transition-colors"
+                      >
+                        Unban
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete/remove ${r.name} permanently? This will delete all associated menus and order histories!`)) {
+                            deleteRestaurant(r.id);
+                            addAuditLog(`Super Admin permanently deleted restaurant: ${r.name}`);
+                          }
+                        }}
+                        className="p-1 px-2.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-[9px] transition-colors flex items-center justify-center"
+                        title="Delete Merchant Account"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

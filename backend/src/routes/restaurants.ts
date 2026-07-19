@@ -8,7 +8,7 @@ const router = Router();
 router.get('/', async (req, res) => {
   try {
     const restaurants = await prisma.restaurant.findMany({
-      where: { isApproved: true },
+      where: { isApproved: true, isBanned: false },
       include: {
         foodCategories: {
           include: {
@@ -140,6 +140,83 @@ router.put('/:id/approve', authenticate, requireRole('SUPER_ADMIN'), async (req:
   }
 });
 
+// PUT /api/restaurants/:id/ban — ban (admin)
+router.put('/:id/ban', authenticate, requireRole('SUPER_ADMIN'), async (req: AuthRequest, res: Response) => {
+  try {
+    const restaurant = await prisma.restaurant.update({
+      where: { id: req.params.id },
+      data: { isBanned: true }
+    });
+    await prisma.auditLog.create({
+      data: { userId: req.user!.userId, action: `Restaurant banned: ${restaurant.name}` }
+    }).catch(() => {});
+    res.json({ success: true, restaurant: mapRestaurant(restaurant as any) });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// PUT /api/restaurants/:id/unban — unban (admin)
+router.put('/:id/unban', authenticate, requireRole('SUPER_ADMIN'), async (req: AuthRequest, res: Response) => {
+  try {
+    const restaurant = await prisma.restaurant.update({
+      where: { id: req.params.id },
+      data: { isBanned: false }
+    });
+    await prisma.auditLog.create({
+      data: { userId: req.user!.userId, action: `Restaurant unbanned: ${restaurant.name}` }
+    }).catch(() => {});
+    res.json({ success: true, restaurant: mapRestaurant(restaurant as any) });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// DELETE /api/restaurants/:id — remove (admin)
+router.delete('/:id', authenticate, requireRole('SUPER_ADMIN'), async (req: AuthRequest, res: Response) => {
+  try {
+    const restaurant = await prisma.restaurant.findUnique({ where: { id: req.params.id } });
+    if (!restaurant) return res.status(404).json({ error: 'Restaurant not found' });
+
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete all reviews of orders of the restaurant
+      await tx.review.deleteMany({
+        where: { order: { restaurantId: restaurant.id } }
+      });
+
+      // 2. Delete all order items of orders of the restaurant
+      await tx.orderItem.deleteMany({
+        where: { order: { restaurantId: restaurant.id } }
+      });
+
+      // 3. Delete all orders of the restaurant
+      await tx.order.deleteMany({
+        where: { restaurantId: restaurant.id }
+      });
+
+      // 4. Delete the restaurant (cascades branches, staff, subscriptions, foodCategories/foods/variants/addons)
+      await tx.restaurant.delete({
+        where: { id: restaurant.id }
+      });
+
+      // 5. Delete the wallet of the restaurant
+      await tx.wallet.delete({
+        where: { id: restaurant.walletId }
+      });
+
+      // 6. Log in AuditLog
+      await tx.auditLog.create({
+        data: { userId: req.user!.userId, action: `Restaurant deleted: ${restaurant.name}` }
+      });
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete restaurant error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // POST /api/restaurants/:id/menu — add food item
 router.post('/:id/menu', authenticate, async (req: AuthRequest, res: Response) => {
   try {
@@ -209,6 +286,7 @@ function mapRestaurant(r: any) {
     commissionRate: r.commissionRate,
     isApproved: r.isApproved,
     isVerified: r.isVerified,
+    isBanned: r.isBanned,
     address: r.address,
     lat: r.latitude,
     lng: r.longitude,

@@ -101,6 +101,7 @@ export interface Restaurant {
   commissionRate: number;
   isApproved: boolean;
   isVerified: boolean;
+  isBanned?: boolean;
   address: string;
   lat: number;
   lng: number;
@@ -422,6 +423,7 @@ const SEED_RESTAURANTS: Restaurant[] = [
     commissionRate: 15.0,
     isApproved: true,
     isVerified: true,
+    isBanned: false,
     address: '452 Broadway Ave, Manhattan, NY 10013',
     lat: 40.7214,
     lng: -74.0003,
@@ -444,6 +446,7 @@ const SEED_RESTAURANTS: Restaurant[] = [
     commissionRate: 12.0,
     isApproved: true,
     isVerified: true,
+    isBanned: false,
     address: '221 Greenwich St, Manhattan, NY 10007',
     lat: 40.7134,
     lng: -74.0112,
@@ -466,6 +469,7 @@ const SEED_RESTAURANTS: Restaurant[] = [
     commissionRate: 18.0,
     isApproved: true,
     isVerified: true,
+    isBanned: false,
     address: '88 Bowery St, Chinatown, NY 10013',
     lat: 40.7176,
     lng: -73.9961,
@@ -596,6 +600,9 @@ interface AppState {
   addRestaurant: (restaurant: Omit<Restaurant, 'id' | 'rating' | 'reviewsCount' | 'isApproved' | 'isVerified' | 'walletId'>) => string;
   approveRestaurant: (restaurantId: string) => void;
   verifyRestaurant: (restaurantId: string) => void;
+  banRestaurant: (restaurantId: string) => void;
+  unbanRestaurant: (restaurantId: string) => void;
+  deleteRestaurant: (restaurantId: string) => void;
   upgradeRestaurantSubscription: (restaurantId: string, plan: Restaurant['subscriptionPlan']) => void;
   updateRestaurantMenu: (restaurantId: string, menu: Food[]) => void;
   
@@ -797,7 +804,7 @@ export const useAppStore = create<AppState>()(
         const allowedRoles = ['CUSTOMER', 'RESTAURANT_OWNER', 'DELIVERY_PARTNER'];
         const safeRole: Role = allowedRoles.includes(role) ? role as Role : 'CUSTOMER';
 
-        api.register({ name, email, phone, password, role: safeRole }).then(({ data, error }) => {
+        api.register({ name, email, phone, password, role: safeRole }).then(({ data }) => {
           if (data && data.token) {
             setAuthToken(data.token);
             const u = data.user;
@@ -1284,6 +1291,27 @@ export const useAppStore = create<AppState>()(
       verifyRestaurant: (restaurantId) => set((state) => ({
         restaurants: state.restaurants.map(r => r.id === restaurantId ? { ...r, isVerified: true } : r)
       })),
+
+      banRestaurant: (restaurantId) => {
+        set((state) => ({
+          restaurants: state.restaurants.map(r => r.id === restaurantId ? { ...r, isBanned: true } : r)
+        }));
+        api.banRestaurant(restaurantId).catch(err => console.error("Error banning restaurant via API:", err));
+      },
+
+      unbanRestaurant: (restaurantId) => {
+        set((state) => ({
+          restaurants: state.restaurants.map(r => r.id === restaurantId ? { ...r, isBanned: false } : r)
+        }));
+        api.unbanRestaurant(restaurantId).catch(err => console.error("Error unbanning restaurant via API:", err));
+      },
+
+      deleteRestaurant: (restaurantId) => {
+        set((state) => ({
+          restaurants: state.restaurants.filter(r => r.id !== restaurantId)
+        }));
+        api.deleteRestaurant(restaurantId).catch(err => console.error("Error deleting restaurant via API:", err));
+      },
 
       upgradeRestaurantSubscription: (restaurantId, planIdOrName) => set((state) => {
         const foundPlan = state.subscriptionPlans.find(p => p.id === planIdOrName || p.name.toLowerCase() === planIdOrName.toLowerCase() || p.id.includes(planIdOrName.toLowerCase()));

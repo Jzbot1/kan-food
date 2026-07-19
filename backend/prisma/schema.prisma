@@ -101,6 +101,7 @@ model Restaurant {
   commissionRate Float             @default(15.0) // percentage
   isApproved     Boolean           @default(false)
   isVerified     Boolean           @default(false)
+  isBanned       Boolean           @default(false)
   address        String
   latitude       Float
   longitude      Float
